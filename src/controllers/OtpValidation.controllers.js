@@ -68,7 +68,12 @@ const sendEmail = async (email, otp, subject, html) => {
         delete storedOtp[email]; 
         return res.status(200).json({ 
             success:true,
-            message: 'OTP verified successfully' });
+            message: 'OTP verified successfully',
+            data:{
+                email:email
+            }
+        
+        });
     } else {
         return res.status(400).json({ 
             sucess:false,
