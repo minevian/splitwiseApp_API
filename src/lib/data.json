@@ -1,0 +1,18 @@
+{
+  "users": [
+    {
+      "firstName": "miracline",
+      "lastName": "A",
+      "email": "miraclinefrancesca@gmail.com",
+      "password": "12345",
+      "confirmPassword": "12345"
+    },
+    {
+      "firstName": "vishnu",
+      "lastName": "T",
+      "email": "Vishnu@gmail.com",
+      "password": "12345",
+      "confirmPassword": "12345"
+    }
+  ]
+}
