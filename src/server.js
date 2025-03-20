@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import getOtp from './routes/generateOtp.js';
 import verifyOtp from './routes/verifyOtp.js';
 import registerUser from './routes/registerUser.js';
+import getUserDetails from './routes/registerUser.js'
 import connectDB from './db/config.js';
 
 dotenv.config();
@@ -11,11 +12,18 @@ const app = express();
 const port = 8080 ;
 connectDB();
 app.use(express.json()); 
-app.use(cors());
+const corsOptions = {
+  origin: ['http://localhost:8081', 'http://127.0.0.1:8081','http://localhost:5413'], 
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+app.use(cors(corsOptions));
 
 app.use('/api',getOtp);
 app.use('/api',verifyOtp);
 app.use('/api',registerUser)
+app.use('/api',getUserDetails)
 
 
 app.get("/", (req, res) => {

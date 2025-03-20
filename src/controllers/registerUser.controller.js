@@ -61,3 +61,43 @@ export const registerUser = async (req, res) => {
         });
     }
 };
+
+
+export const getRegisterUser = async (req, res) => {
+    const { email } = req.query; 
+
+    if (!email) {
+        return res.status(400).json({
+            success: false,
+            message: 'Email is required'
+        });
+    }
+
+    try {
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: 'User not found'
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            data: {
+                userName: user.userName,
+                phoneNumber: user.phoneNumber,
+                email: user.email,
+                createdAt: user.createdAt
+            }
+        });
+
+    } catch (error) {
+        console.error('Error fetching user:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error'
+        });
+    }
+};
