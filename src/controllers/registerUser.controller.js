@@ -1,60 +1,63 @@
-const fs = require('fs');
-const path = require('path');
+import User from '../models/user.js';
+import bcrypt from 'bcryptjs';
 
-const dataFilePath = path.join(__dirname, '../lib/data.json'); 
+export const registerUser = async (req, res) => {
+    const { userName, phoneNumber, email, password, confirmPassword } = req.body;
 
-const registerUser = (req, res) => {
-    const { firstName,lastName, email, password,confirmPassword } = req.body;
+    if (!userName || !phoneNumber || !email || !password || !confirmPassword) {
+        return res.status(400).json({
+            success: false,
+            message: 'Please fill in all fields'
+        });
+    }
 
-    // Debugging: Check the path to data.json
-    console.log('Data file path:', dataFilePath);
+    if (password !== confirmPassword) {
+        return res.status(400).json({
+            success: false,
+            message: 'Passwords do not match'
+        });
+    }
 
-    // Check if the data.json file exists
-    fs.exists(dataFilePath, (exists) => {
-        if (!exists) {
-            return res.status(500).send('data.json file does not exist');
-        }
-    });
-
-    // Read the existing data from the JSON file
-    fs.readFile(dataFilePath, 'utf8', (err, data) => {
-        if (err) {
-            console.error('Error reading data file:', err);  // More detailed error
-            return res.status(500).send('Error reading data file');
-        }
-
-        let users = JSON.parse(data).users;
-
+    try {
         // Check if the user already exists
-        const userExists = users.some(user => user.email === email);
-        if (userExists) {
-            return res.status(201).json({
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(409).json({
                 success: false,
                 message: 'Email address already exists'
             });
         }
 
-        // Add new user data
-        const newUser = { firstName,lastName, email, password,confirmPassword };
-        users.push(newUser);
+        // Hash the password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
 
-        // Save the updated data back to the JSON file
-        fs.writeFile(dataFilePath, JSON.stringify({ users }, null, 2), (err) => {
-            if (err) {
-                console.error('Error saving user data:', err);
-                return res.status(500).send('Error saving user data');
-            }
-
-            return res.status(201).json({
-                success: true,
-                message: 'Registered successfully',
-                data: {
-                    email: newUser.email,
-                    name: newUser.firstName 
-                }
-            });
+        // Create new user
+        const newUser = new User({
+            userName,
+            phoneNumber,
+            email,
+            password: hashedPassword,
+            confirmPassword: hashedPassword
         });
-    });
-}
 
-module.exports = { registerUser };
+        // Save the user to MongoDB
+        await newUser.save();
+
+        res.status(201).json({
+            success: true,
+            message: 'Registered successfully',
+            data: {
+                email: newUser.email,
+                name: newUser.userName
+            }
+        });
+
+    } catch (error) {
+        console.error('Error registering user:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Server error'
+        });
+    }
+};

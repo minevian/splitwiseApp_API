@@ -1,11 +1,8 @@
-const express = require('express');
+import express from 'express';
+import { getOtp } from '../controllers/OtpValidation.controllers.js';
+
 const router = express.Router();
-const {getOtp} = require('../controllers/OtpValidation.controllers.js')
 
+router.post('/getOtp', getOtp);
 
-router.post('/getOtp',getOtp);
-
-
-
-
-module.exports = router;
+export default router;

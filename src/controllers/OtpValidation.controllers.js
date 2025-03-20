@@ -1,8 +1,7 @@
-const { generateOTP, getUserNamefromEmail,  storedOtp } = require('../utils/otpUtils');
-const nodemailer = require('nodemailer');
+import { generateOTP, getUserNamefromEmail, storedOtp } from '../utils/otpUtils.js';
+import nodemailer from 'nodemailer';
 
-
- const getOtp =  (req, res) => {
+export const getOtp = (req, res) => {
     console.log('Received POST request to send OTP');
     
     const email = req.body.email;
@@ -19,16 +18,14 @@ const nodemailer = require('nodemailer');
 
     storedOtp[email] = otp;
     res.status(200).json({ 
-        success:true,
+        success: true,
         message: 'OTP sent successfully',
-        data:{
-            otp:otp
+        data: {
+            otp: otp
         }
-    
-    }
-    
-    );
-}
+    });
+};
+
 const sendEmail = async (email, otp, subject, html) => {
     console.log('Generated OTP:', otp);
 
@@ -55,30 +52,29 @@ const sendEmail = async (email, otp, subject, html) => {
     }
 };
 
- const verifyOtp = (req, res) => {
+export const verifyOtp = (req, res) => {
     const { email, otp } = req.body;
 
     if (!storedOtp[email]) {
         return res.status(400).json({
-            sucess:false,
-            error: 'OTP expired or not requested' });
+            success: false,
+            error: 'OTP expired or not requested'
+        });
     }
 
     if (storedOtp[email] === otp) {
         delete storedOtp[email]; 
         return res.status(200).json({ 
-            success:true,
+            success: true,
             message: 'OTP verified successfully',
-            data:{
-                email:email
+            data: {
+                email: email
             }
-        
         });
     } else {
         return res.status(400).json({ 
-            sucess:false,
-            error: 'Invalid OTP' });
+            success: false,
+            error: 'Invalid OTP' 
+        });
     }
-}
-
-module.exports = {getOtp,verifyOtp}
+};
