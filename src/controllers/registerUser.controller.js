@@ -89,7 +89,8 @@ export const getRegisterUser = async (req, res) => {
                 userName: user.userName,
                 phoneNumber: user.phoneNumber,
                 email: user.email,
-                createdAt: user.createdAt
+                createdAt: user.createdAt,
+                profileImage:user.profilePicture
             }
         });
 

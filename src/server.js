@@ -6,6 +6,8 @@ import verifyOtp from './routes/verifyOtp.js';
 import registerUser from './routes/registerUser.js';
 import getUserDetails from './routes/registerUser.js'
 import connectDB from './db/config.js';
+import loginUser from './routes/LoginUser.js';
+import profilePicture from './routes/profileImage.routes.js'
 
 dotenv.config();
 const app = express();
@@ -23,7 +25,9 @@ app.use(cors(corsOptions));
 app.use('/api',getOtp);
 app.use('/api',verifyOtp);
 app.use('/api',registerUser)
-app.use('/api',getUserDetails)
+app.use('/api',getUserDetails);
+app.use('/api',loginUser);
+app.use('/api',profilePicture)
 
 
 app.get("/", (req, res) => {
