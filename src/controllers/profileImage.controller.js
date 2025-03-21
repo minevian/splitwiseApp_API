@@ -1,15 +1,23 @@
-import multer from 'multer';
-import path from 'path';
+import cloudinary from '../db/cloudinaryConfig.js';
+import streamifier from 'streamifier';
 import User from '../models/user.js';
 
-const storage = multer.diskStorage({
-    destination: './uploads',
-    filename: (req, file, cb) => {
-        cb(null, `${Date.now()}_${file.originalname}`);
-    }
-});
+const uploadToCloudinary = (buffer) => {
+    return new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+            { folder: 'profile_pictures' },  // Folder in Cloudinary
+            (error, result) => {
+                if (error) {
+                    console.error('Cloudinary Upload Error:', error);
+                    return reject(error);
+                }
+                resolve(result);
+            }
+        );
 
-const upload = multer({ storage });
+        streamifier.createReadStream(buffer).pipe(stream);
+    });
+};
 
 export const uploadProfilePicture = async (req, res) => {
     const { email } = req.body;
@@ -18,9 +26,13 @@ export const uploadProfilePicture = async (req, res) => {
         return res.status(400).json({ success: false, message: 'No image uploaded' });
     }
 
-    const imageUrl = `/uploads/${req.file.filename}`;
-
     try {
+        // Upload buffer directly to Cloudinary
+        const result = await uploadToCloudinary(req.file.buffer);
+
+        const imageUrl = result.secure_url;
+
+        // Store image URL in MongoDB
         const user = await User.findOneAndUpdate(
             { email },
             { profilePicture: imageUrl },
@@ -33,8 +45,10 @@ export const uploadProfilePicture = async (req, res) => {
 
         res.status(200).json({
             success: true,
-            message: 'Profile picture updated successfully',
-            data: user
+            message: 'Profile picture uploaded successfully',
+            data: {
+                imageUrl: user.profilePicture
+            }
         });
 
     } catch (error) {
