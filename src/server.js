@@ -7,7 +7,12 @@ import registerUser from './routes/registerUser.js';
 import getUserDetails from './routes/registerUser.js'
 import connectDB from './db/config.js';
 import loginUser from './routes/LoginUser.js';
-import profilePicture from './routes/profileImage.routes.js'
+import profilePicture from './routes/profileImage.routes.js';
+import createGroup from './routes/GroupActivities.js';
+import getGroups from './routes/GroupActivities.js';
+import getGroupById from './routes/GroupActivities.js'
+
+
 
 dotenv.config();
 const app = express();
@@ -27,7 +32,11 @@ app.use('/api',verifyOtp);
 app.use('/api',registerUser)
 app.use('/api',getUserDetails);
 app.use('/api',loginUser);
-app.use('/api',profilePicture)
+app.use('/api',profilePicture);
+app.use('/api',createGroup)
+app.use('/api',getGroups);
+app.use('/api',getGroupById);
+
 
 
 app.get("/", (req, res) => {

@@ -90,7 +90,8 @@ export const getRegisterUser = async (req, res) => {
                 phoneNumber: user.phoneNumber,
                 email: user.email,
                 createdAt: user.createdAt,
-                profileImage:user.profilePicture
+                profileImage:user.profilePicture,
+                userId:user._id,
             }
         });
 
