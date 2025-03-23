@@ -1,31 +1,4 @@
-// import mongoose from 'mongoose';
 
-// const groupSchema = new mongoose.Schema({
-//     groupName: {
-//         type: String,
-//         required: true,
-//         trim: true
-//     },
-//     members: [
-//         {
-//             userName: String,
-//             email: String
-//         }
-//     ],
-//     expenses: [
-//         {
-//             description: String,
-//             amount: Number,
-//             paidBy: String,
-//             date: { type: Date, default: Date.now }
-//         }
-//     ],
-//     createdAt: { type: Date, default: Date.now }
-// });
-
-// const Group = mongoose.model('Group', groupSchema);
-
-// export default Group;
 
 import mongoose from 'mongoose';
 
